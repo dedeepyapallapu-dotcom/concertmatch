@@ -145,3 +145,54 @@
       width: 60vw;
     }
   }
+
+  /* BUTTONS */
+  .hero-buttons {
+    display: flex;
+    gap: 28px;
+    margin: 30px 0 36px 0;
+  }
+  
+  /* BIG rounded pill button */
+  .slider-btn {
+    position: relative;
+    padding: 18px 48px;              /* makes it bigger */
+    font-size: 1.25rem;              /* larger text */
+    font-weight: 500;
+    color: white;
+    background: transparent;
+    border: 2px solid #ebf0fa;
+    border-radius: 999px;            /* fully rounded pill */
+    cursor: pointer;
+    overflow: hidden;
+    transition: color 0.35s ease;
+    color: #1f2227;                 /* dark text */
+    background: white;  
+    z-index: 0;
+  }
+  
+  /* sliding background */
+  .slider-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: #acbfe6;
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+    z-index: -1;
+  }
+  
+  .slider-btn:hover::before {
+    transform: translateX(0);
+  }
+  
+  .slider-btn:hover {
+    color: #1f2227;
+  }
+  
+  /* keep text above slider */
+  .slider-btn {
+    position: relative;
+    z-index: 1;
+  }
+  

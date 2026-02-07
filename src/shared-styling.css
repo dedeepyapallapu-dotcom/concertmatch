@@ -16,7 +16,10 @@ html, body, #root {
   padding-left: 12rem;
   padding-right: 10rem;
 }
-
+.concerts-page .card p {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
 .default-card {
   border-radius: '12px';
   color: #282c34;
@@ -108,3 +111,121 @@ html, body {
 .carousel-dots{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:flex;gap:8px}
 .carousel-dot{width:34px;height:6px;border:0;border-radius:6px;background:rgba(255,255,255,.5);opacity:.6;cursor:pointer}
 .carousel-dot.on{opacity:1;background:#fff;width:46px}
+/* Your global rule affects Card.Text (<p>) — remove padding inside concert cards only */
+.concerts-page .card p {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Shell that holds arrows + the row, so arrows sit on the sides */
+.concerts-row-shell {
+  position: relative;
+  display: flex;
+  align-items: center; /* vertically centers arrows relative to row */
+  gap: 12px;
+}
+
+/* Makes cards take up slightly less horizontal space, leaving margin for arrows */
+.concerts-row-inner {
+  width: min(92vw, 1500px); /* <-- shrink the row a bit so arrows sit outside */
+  margin: 0 auto;
+}
+
+/* Arrow buttons */
+.concerts-arrow {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: 2px solid rgba(40, 44, 52, 0.35);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #282c34;
+  font-size: 30px;
+  line-height: 40px;
+  cursor: pointer;
+}
+
+.concerts-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* EXACT 5 per row on large screens */
+.col-5-per-row {
+  flex: 0 0 20%;
+  max-width: 20%;
+}
+
+/* Responsive fallbacks */
+@media (max-width: 1400px) {
+  .col-5-per-row { flex: 0 0 25%; max-width: 25%; } /* 4 */
+}
+@media (max-width: 992px) {
+  .col-5-per-row { flex: 0 0 50%; max-width: 50%; } /* 2 */
+}
+@media (max-width: 576px) {
+  .col-5-per-row { flex: 0 0 100%; max-width: 100%; } /* 1 */
+}
+
+/* --- Consistent card height --- */
+.concert-card {
+  border-radius: 14px;
+  overflow: hidden;
+  height: 520px;            /* consistent overall height */
+  display: flex;
+  flex-direction: column;
+}
+
+.concert-card-img {
+  height: 170px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 0 !important; /* override global img rounding just for this top image */
+}
+
+.concert-card-img.placeholder {
+  background: #ddd;
+}
+
+.concert-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Keep long titles from making cards taller */
+.concert-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;       /* limit title lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.concert-title-link {
+  text-decoration: none;
+}
+
+/* badge spacing */
+.concert-badge-row {
+  margin-bottom: 10px;
+}
+
+/* Limit venue/location to keep height consistent */
+.concert-venue {
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.concert-location {
+  margin-bottom: 0;
+  margin-top: auto; /* pushes location lower if space exists */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;       /* limit address lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
