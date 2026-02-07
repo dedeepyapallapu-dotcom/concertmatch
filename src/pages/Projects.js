@@ -5,6 +5,16 @@ import '../shared-styling.css';
 export default function Projects() {
   const cityQuery = 'Austin,TX';
 
+  // --- templated users (fake for now) ---
+  const demoUsers = [
+    { name: 'Alex M.', campus: 'UT Austin', tags: ['Indie', 'Chill'], match: 94 },
+    { name: 'Jordan K.', campus: 'UT Austin', tags: ['Hip-hop', 'Extrovert'], match: 89 },
+    { name: 'Sam T.', campus: 'UT Austin', tags: ['R&B', 'Vibes'], match: 86 },
+    { name: 'Riley P.', campus: 'UT Austin', tags: ['Pop', 'Adventurous'], match: 82 },
+    { name: 'Casey W.', campus: 'UT Austin', tags: ['Electronic', 'Introvert'], match: 79 },
+  ];
+
+  // --- concerts state ---
   const [page, setPage] = useState(1); // 1-based
   const [events, setEvents] = useState([]);
   const [hasMore, setHasMore] = useState(true);
@@ -13,8 +23,7 @@ export default function Projects() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
 
-  // cache pages so back/forward feels instant
-  const [pageCache, setPageCache] = useState({}); // { [pageNumber]: { events, hasMore, endReached } }
+  const [pageCache, setPageCache] = useState({});
 
   const safeText = (v) => {
     if (!v) return '';
@@ -59,7 +68,6 @@ export default function Projects() {
   };
 
   const fetchPage = async (p) => {
-    // cached?
     if (pageCache[p]) {
       setEvents(pageCache[p].events);
       setHasMore(pageCache[p].hasMore);
@@ -80,9 +88,8 @@ export default function Projects() {
       const data = await resp.json();
       const normalized = normalizeEvents(data.events);
 
-      // Backend sends has_more, but we also treat "no events" as end.
       const more = !!data.has_more && normalized.length > 0;
-      const end = !more; // if there isn't more, we reached end
+      const end = !more;
 
       setEvents(normalized);
       setHasMore(more);
@@ -104,61 +111,69 @@ export default function Projects() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
-  // Preload next page so Next click feels instant — but only if we have more
-  useEffect(() => {
-    const next = page + 1;
-    if (!hasMore || pageCache[next]) return;
-
-    fetch(`/api/concerts?city=${encodeURIComponent(cityQuery)}&page=${next}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (!data || !Array.isArray(data.events)) return;
-        const normalized = normalizeEvents(data.events);
-        const more = !!data.has_more && normalized.length > 0;
-        const end = !more;
-
-        setPageCache((prev) => ({
-          ...prev,
-          [next]: { events: normalized, hasMore: more, endReached: end },
-        }));
-      })
-      .catch(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, hasMore]);
-
   const cards = useMemo(() => events, [events]);
 
   const canPrev = page > 1;
   const canNext = hasMore && !endReached && !loading;
 
-  const goPrev = () => {
-    if (canPrev && !loading) setPage((p) => p - 1);
-  };
-  const goNext = () => {
-    if (canNext) setPage((p) => p + 1);
-  };
-
-  // Page numbers underneath (windowed)
-  const pageButtons = useMemo(() => {
-    const start = Math.max(1, page - 2);
-    const end = page + 2;
-    const window = [];
-
-    for (let p = start; p <= end; p++) {
-      if (p <= page) window.push(p);
-      else {
-        // show future pages if we know they exist
-        if (p === page + 1 && hasMore && !endReached) window.push(p);
-        else if (pageCache[p]) window.push(p);
-      }
-    }
-    return Array.from(new Set(window));
-  }, [page, hasMore, endReached, pageCache]);
+  const goPrev = () => { if (canPrev && !loading) setPage((p) => p - 1); };
+  const goNext = () => { if (canNext) setPage((p) => p + 1); };
 
   return (
     <div className="page-styling concerts-page">
-      <Container fluid className="py-5">
-        <h1 className="mb-4 text-center">Concerts in Austin</h1>
+      <Container className="py-5 concerts-wrap">
+        {/* Top hero card */}
+        <div className="dash-hero">
+          <div className="dash-hero-left">
+            <div className="pill">● LIVE MATCHING</div>
+            <h1 className="dash-title">Don&apos;t have a +1?<br />We&apos;ll find you one.</h1>
+            <p className="dash-sub">
+              Take a quick personality quiz and get matched with people who vibe the same way.
+              Because music&apos;s better together.
+            </p>
+            <button className="dash-cta">Take the Vibe Check</button>
+          </div>
+          <div className="dash-hero-right" />
+        </div>
+
+        {/* Profile banner */}
+        <div className="dash-banner">
+          <div className="banner-icon">♪</div>
+          <div className="banner-text">
+            <div className="banner-title">Complete your Personality Profile</div>
+            <div className="banner-sub">Answer quick questions so we can pair you with your ideal concert buddy.</div>
+          </div>
+          <div className="banner-arrow">→</div>
+        </div>
+
+        {/* People row (templated) */}
+        <div className="dash-section-head">
+          <div className="dash-section-title">People looking for a +1</div>
+          <div className="dash-section-link">See all →</div>
+        </div>
+
+        <div className="people-row">
+          {demoUsers.map((u) => (
+            <div className="person-card" key={u.name}>
+              <div className="person-avatar">{u.name[0]}</div>
+              <div className="person-name">{u.name}</div>
+              <div className="person-campus">{u.campus}</div>
+              <div className="person-tags">
+                {u.tags.map((t) => (
+                  <span className="tag" key={t}>{t}</span>
+                ))}
+              </div>
+              <div className="person-match">{u.match}%</div>
+              <div className="person-match-sub">VIBE MATCH</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Upcoming concerts */}
+        <div className="dash-section-head" style={{ marginTop: '32px' }}>
+          <div className="dash-section-title">Upcoming concerts</div>
+          <div className="dash-section-link">Browse all →</div>
+        </div>
 
         {loading && (
           <div className="d-flex justify-content-center py-5">
@@ -167,23 +182,22 @@ export default function Projects() {
         )}
 
         {!loading && errorMsg && (
-          <div className="text-center" style={{ color: '#282c34' }}>
+          <div className="text-center" style={{ color: 'white', opacity: 0.85 }}>
             {errorMsg}
           </div>
         )}
 
         {!loading && !errorMsg && cards.length === 0 && (
-          <div className="text-center" style={{ color: '#282c34' }}>
+          <div className="text-center" style={{ color: 'white', opacity: 0.85 }}>
             No concerts found.
           </div>
         )}
 
-        {/* ARROWS + ROW WRAPPER */}
         {!loading && cards.length > 0 && (
-          <div className="concerts-row-shell">
+          <div className="concerts-row-shell dark-shell">
             <button
               type="button"
-              className="concerts-arrow concerts-arrow-left"
+              className="concerts-arrow dark-arrow"
               onClick={goPrev}
               disabled={!canPrev || loading}
               aria-label="Previous page"
@@ -191,11 +205,11 @@ export default function Projects() {
               ‹
             </button>
 
-            <div className="concerts-row-inner">
+            <div className="concerts-row-inner dark-inner">
               <Row className="g-4">
                 {cards.map((c) => (
-                  <Col key={c.key} className="col-5-per-row">
-                    <Card className="concert-card h-100">
+                  <Col key={c.key} className="col-3-per-row">
+                    <Card className="concert-card dark-card h-100">
                       {c.image ? (
                         <Card.Img
                           variant="top"
@@ -210,7 +224,7 @@ export default function Projects() {
                       <Card.Body className="concert-card-body">
                         <Card.Title className="concert-title">
                           {c.link ? (
-                            <a href={c.link} target="_blank" rel="noreferrer" className="concert-title-link">
+                            <a href={c.link} target="_blank" rel="noreferrer" className="concert-title-link dark-link">
                               {c.title}
                             </a>
                           ) : (
@@ -231,6 +245,10 @@ export default function Projects() {
                         )}
 
                         {c.location && <Card.Text className="concert-location">{c.location}</Card.Text>}
+
+                        <div style={{ marginTop: '14px' }}>
+                          <button className="find-btn">Find a +1</button>
+                        </div>
                       </Card.Body>
                     </Card>
                   </Col>
@@ -240,7 +258,7 @@ export default function Projects() {
 
             <button
               type="button"
-              className="concerts-arrow concerts-arrow-right"
+              className="concerts-arrow dark-arrow"
               onClick={goNext}
               disabled={!canNext}
               aria-label="Next page"
@@ -250,29 +268,25 @@ export default function Projects() {
           </div>
         )}
 
-        {/* Page numbers underneath */}
         {!loading && cards.length > 0 && (
           <div className="d-flex justify-content-center align-items-center mt-4 gap-2 flex-wrap">
-            <Button variant="light" onClick={goPrev} disabled={!canPrev}>
+            <Button variant="outline-light" onClick={goPrev} disabled={!canPrev}>
               Prev
             </Button>
 
-            {pageButtons.map((p) => (
-              <Button key={p} variant={p === page ? 'dark' : 'light'} onClick={() => setPage(p)}>
-                {p}
-              </Button>
-            ))}
+            <Button variant="outline-light" disabled>
+              Page {page}
+            </Button>
 
-            <Button variant="light" onClick={goNext} disabled={!canNext}>
+            <Button variant="outline-light" onClick={goNext} disabled={!canNext}>
               Next
             </Button>
           </div>
         )}
 
-        {/* End indicator */}
         {!loading && cards.length > 0 && endReached && (
-          <div className="text-center mt-3" style={{ color: '#282c34', opacity: 0.8 }}>
-            You’ve reached the end.
+          <div className="text-center mt-3" style={{ color: 'white', opacity: 0.75 }}>
+            You&apos;ve reached the end.
           </div>
         )}
       </Container>
