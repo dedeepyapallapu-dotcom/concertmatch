@@ -1,6 +1,6 @@
 import { Button, Container, Row, Col } from 'react-bootstrap';
 import './Hero.css';
-import heroImg from './images/bird.avif';
+import heroImg from './images/cd.jpg';
 import portrait from './images/portrait.png';
 import { useNavigate } from 'react-router-dom';
 import './shared-styling.css'; 
@@ -29,21 +29,21 @@ export default function Hero() {
       <Container fluid >
         <Row>
           <Col className="hero-styling d-flex flex-column justify-content-center basic ">   
-            <h1  style={{ fontWeight: 'bold' }} className="align-items-end">
-              Julia Mergel.
+            <h1  style={{ fontWeight: 'bold', marginTop: '290px' }} className="align-items-end">
+              The Best Music Site.
             </h1>
             <p style={{  marginBottom: '30px' }} >
-              Mathematics & Computer Science <br></br> Double Major at UT Austin.
+              The best music site. <br></br> Designed by Julia, Vena, Harini,
             </p>
           </Col>
           <Col>
             {/* Right: Portrait image */}
             <div style={{ flexShrink: 0 }} className="hero-img-container">
-              <img
+              {/* <img
                 src={portrait}
                 alt="Portrait"
                 className="hero-img"
-              />
+              /> */}
             </div>
           </Col>
         </Row>

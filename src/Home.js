@@ -17,18 +17,27 @@ export default function Home() {
   return (
     <>
     <Container fluid className="showcase-section basic">
-    <Row className="g-0" >
-      <Col md={4} className="d-flex justify-content-end showcase-card">
-        <img src={img1} alt="About Me" className="showcase-img" style={{ marginLeft: '5vw' }} onClick={() => navigate('about')} />
-        <div className="showcase-text">About<br />Me</div>
-      </Col>
-      <Col className="showcase-card">
-        <img src={img2} alt="My Projects" className="showcase-img"  style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto' }} onClick={() => navigate('projects')} />
-      </Col>
-      <Col className="showcase-card">
-        <img src={img3} alt="My Academics" className="showcase-img" onClick={() => navigate('academics')}  />
-        <div className="showcase-text" style={{marginTop: '72vh', marginLeft: '1vw'}}>My<br />Academics</div>
-      </Col>
+    <Row className="g-0 justify-content-center"
+    style={{ paddingTop: "10vh" }} >
+    <Col md={4}>
+      <h2 style={{ color: "white", marginBottom: "1.5rem" }}>Login</h2>
+
+      <form>
+        <div className="mb-3">
+          <label className="form-label" style={{ color: "white" }}>Email</label>
+          <input type="email" className="form-control" placeholder="Enter email address" />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label" style={{ color: "white" }}>Password</label>
+          <input type="password" className="form-control" placeholder="Enter password" />
+        </div>
+
+        <button type="submit" className="btn btn-light w-100">
+          Log In
+        </button>
+      </form>
+    </Col>
     </Row>
     
 
